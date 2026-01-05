@@ -2,5 +2,6 @@ ftfy
 packaging
 regex
 tqdm
-torch
 torchvision
+jax[cuda12]
+flax
