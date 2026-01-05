@@ -4,11 +4,11 @@ import pkg_resources
 from setuptools import setup, find_packages
 
 setup(
-    name="clip",
-    py_modules=["clip"],
+    name="clip_flax",
+    py_modules=["clip_flax"],
     version="1.0",
     description="",
-    author="OpenAI",
+    author="Williams Edi",
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
         str(r)
