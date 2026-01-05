@@ -1,25 +1,42 @@
-import numpy as np
-import pytest
-import torch
 from PIL import Image
 
+import jax
+import jax.numpy as jnp
+import numpy as np
+
 import clip
+import clip_flax
 
+def test_model(model_name):
+    jax_clip, jax_preprocess = clip_flax.load(model_name)
 
-@pytest.mark.parametrize('model_name', clip.available_models())
-def test_consistency(model_name):
-    device = "cpu"
-    jit_model, transform = clip.load(model_name, device=device, jit=True)
-    py_model, _ = clip.load(model_name, device=device, jit=False)
+    jax_image = jnp.array(np.expand_dims(jax_preprocess(Image.open("CLIP.png")), 0))
+    jax_image = jax_image.transpose((0, 2, 3, 1))
+    jax_text = clip_flax.tokenize(["a diagram", "a dog", "a cat"])
 
-    image = transform(Image.open("CLIP.png")).unsqueeze(0).to(device)
-    text = clip.tokenize(["a diagram", "a dog", "a cat"]).to(device)
+    jax_image_embed = jax_clip.encode_image(jax_image)
+    jax_text_embed = jax_clip.encode_text(jax_text)
+    
+    pytorch_clip, pyt_preprocess = clip.load(model_name, "cpu")
 
-    with torch.no_grad():
-        logits_per_image, _ = jit_model(image, text)
-        jit_probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+    pyt_image = pyt_preprocess(Image.open("CLIP.png")).unsqueeze(0).to("cpu")
+    pyt_text = clip.tokenize(["a diagram", "a dog", "a cat"])
 
-        logits_per_image, _ = py_model(image, text)
-        py_probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+    pyt_image_embed = pytorch_clip.encode_image(pyt_image)
+    pyt_text_embed = pytorch_clip.encode_text(pyt_text)
 
-    assert np.allclose(jit_probs, py_probs, atol=0.01, rtol=0.1)
+    pyt_image = pyt_image.cpu().detach().numpy()
+    jax_image = np.array(jax_image)
+
+    pyt_text_embed = pyt_text_embed.cpu().detach().numpy()
+    print(pyt_image_embed)
+    jax_text_embed = np.array(jax_text_embed)
+
+    assert np.allclose(jax_image_embed, pyt_image_embed, atol=0.01, rtol=0.01)
+    assert np.allclose(jax_text_embed, pyt_text_embed, atol=0.01, rtol=0.01)
+
+    print(f"{model_name}: done!")
+
+test_model("ViT-B/32")
+test_model("ViT-B/16")
+test_model("ViT-L/14")
