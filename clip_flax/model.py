@@ -15,7 +15,8 @@ class Bottleneck(nnx.Module):
         self.conv1 = nnx.Conv(
             in_channels, 
             out_channels, 
-            1, 
+            kernel_size=(1, 1),
+            strides=(1, 1),
             use_bias=False,
             rngs=RNGS
         )
@@ -24,8 +25,9 @@ class Bottleneck(nnx.Module):
         self.conv2 = nnx.Conv(
             out_channels, 
             out_channels, 
-            3, 
-            padding=1,
+            kernel_size=(3, 3),
+            strides=(1, 1),
+            padding=(1, 1),
             use_bias=False,
             rngs=RNGS
         )
@@ -34,7 +36,8 @@ class Bottleneck(nnx.Module):
         self.conv3 = nnx.Conv(
             out_channels, 
             out_channels * self.expansion, 
-            1, 
+            kernel_size=(1, 1),
+            strides=(1, 1),
             use_bias=False,
             rngs=RNGS
         )
@@ -51,8 +54,8 @@ class Bottleneck(nnx.Module):
                 nnx.Conv(
                     in_channels, 
                     out_channels * self.expansion, 
-                    1, 
-                    strides=1, 
+                    kernel_size=(1, 1), 
+                    strides=(1, 1), 
                     use_bias=False,
                     rngs=RNGS
                 ),
@@ -121,7 +124,7 @@ class ModifiedResNet(nnx.Module):
             input_resolution,
             width // 2,
             kernel_size=(3, 3),
-            strides=2,
+            strides=(2, 2),
             padding="SAME",
             use_bias=False,
             rngs=RNGS
@@ -132,7 +135,7 @@ class ModifiedResNet(nnx.Module):
             input_resolution,
             width,
             kernel_size=(3, 3),
-            strides=1,
+            strides=(1, 1),
             padding="SAME",
             use_bias=False,
             rngs=RNGS
@@ -143,7 +146,7 @@ class ModifiedResNet(nnx.Module):
             input_resolution,
             width,
             kernel_size=(3, 3),
-            strides=1,
+            strides=(1, 1),
             padding="SAME",
             use_bias=False,
             rngs=RNGS
@@ -303,7 +306,7 @@ class VisualTransformer(nnx.Module):
             in_features=3,
             out_features=width,
             kernel_size=(patch_size, patch_size),
-            strides=patch_size,
+            strides=(patch_size, patch_size),
             use_bias=False,
             padding='SAME',
             rngs=RNGS
