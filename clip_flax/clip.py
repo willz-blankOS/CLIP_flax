@@ -4,7 +4,7 @@ import urllib
 import warnings
 import numpy as np
 from packaging import version
-from typing import Union, List
+from typing import Callable, Union, List
 
 import torch
 from PIL import Image
@@ -143,7 +143,7 @@ def convert_params(torch_state, jax_params, rn=False):
     return name_iter(jax_params, "", process_node)
 
 
-def load(name: str, device: str = "cpu"):
+def load(name: str, device: str = "cpu") -> tuple[CLIP, Callable[[np.ndarray[float]], np.ndarray[float]]]:
     """Load a CLIP model
 
     Parameters
