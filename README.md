@@ -22,7 +22,7 @@ First, [install jax 0.8.2](https://docs.jax.dev/en/latest/installation.html), [f
 
 ```bash
 $ pip install pytorch pytorch=1.7.1 torchvision cudatoolkit=11.0
-$ pip install jax[cuda13]>=0.8.0 flax>=0.8.0
+$ pip install jax[cuda12]>=0.8.0 flax>=0.8.0
 $ pip install ftfy regex tqdm
 $ pip install git+https://github.com/willz-blankOS/CLIP_flax.git
 ```
